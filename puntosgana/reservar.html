@@ -1,0 +1,43 @@
+<!-- Un formulario sencillo -->
+<form id="form-turno">
+  <input type="text" id="nombre" placeholder="Nombre" required>
+  <input type="text" id="cedula" placeholder="Cédula" required>
+  <input type="date" id="fecha" required>
+  <input type="time" id="hora" required>
+  <button type="submit">Reservar turno</button>
+</form>
+<div id="respuesta"></div>
+
+<script>
+document.getElementById('form-turno').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const data = {
+    nombre_cliente: document.getElementById('nombre').value,
+    cedula: document.getElementById('cedula').value,
+    fecha: document.getElementById('fecha').value,
+    hora: document.getElementById('hora').value,
+    sucursal: "Quibdó"
+  };
+
+  const respuestaDiv = document.getElementById('respuesta');
+
+  try {
+    const res = await fetch('http://localhost/puntosgana/api_turnos.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if(result.success){
+      respuestaDiv.innerHTML = "✔️ " + result.mensaje;
+    } else {
+      respuestaDiv.innerHTML = "❌ " + (result.error || "Error al reservar");
+    }
+  } catch (err) {
+    respuestaDiv.innerHTML = "❌ Error de conexión o del servidor";
+  }
+});
+</script>
